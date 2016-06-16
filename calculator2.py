@@ -76,7 +76,7 @@ def evaluate_times_div(tokens):
                 index -= 2
             else:
                 print 'Invalid syntax2'
-                exit(1)
+                #exit(1)
         elif tokens[index]['type'] == 'DIVIDE':
             if tokens[index - 1]['type'] == 'NUMBER' and tokens[index + 1]['type'] == 'NUMBER':
                 tokens[index - 1]['number'] = tokens[index - 1]['number'] * 1.0 / tokens[index + 1]['number']
@@ -103,17 +103,16 @@ def evaluate_plus_minus(tokens):
         index += 1
     return answer
 
-def evaluate_parenthesis(tokens):
-    count = 0
+def make_parindexlist(tokens):
     index = 0
+    count = 0
     parindex = []
     while index < len(tokens):
         if tokens[index]['type'] == 'PAROPEN':
-            parindex.append({'popos': index, 'pcpos': 0})
+            parindex.append({'pos': index})
             count += 1
         elif tokens[index]['type'] == 'PARCLOSE':
             if count > 0:
-                parindex[count - 1]['pcpos'] = index
                 count -= 1
             else:
                 print 'Invalid syntax5'
@@ -122,12 +121,20 @@ def evaluate_parenthesis(tokens):
     if count > 0:
         print 'Invalid syntax6'
         exit(1)
+    return parindex
+
+def evaluate_parenthesis(tokens):
+    parindex = make_parindexlist(tokens)
     while len(parindex) > 0:
-        part_answer = evaluate(tokens[parindex[-1]['popos'] + 1 : parindex[-1]['pcpos']])
-        tokens.insert(parindex[-1]['popos'], {'type': 'NUMBER', 'number': part_answer})
-        del tokens[parindex[-1]['popos'] + 1 : parindex[-1]['pcpos']+2]
+        index = parindex[-1]['pos'] + 1
+        while index < len(tokens):
+            if tokens[index]['type'] == 'PARCLOSE':
+                part_answer = evaluate(tokens[parindex[-1]['pos'] + 1 : index])
+                tokens.insert(parindex[-1]['pos'], {'type': 'NUMBER', 'number': part_answer})
+                del tokens[parindex[-1]['pos'] + 1 : index+2]
+            index += 1
         parindex.pop()
-    return part_answer
+    return tokens
 
 def evaluate(tokens):
     evaluate_times_div(tokens)
@@ -139,5 +146,6 @@ while True:
     print '> ',
     line = raw_input()
     tokens = tokenize(line)
-    answer = evaluate_parenthesis(tokens)
+    tokens = evaluate_parenthesis(tokens)
+    answer = evaluate(tokens)
     print "answer = %f\n" % answer
