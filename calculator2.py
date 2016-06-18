@@ -72,15 +72,15 @@ def evaluate_times_div(tokens):
         if tokens[index]['type'] == 'TIMES':
             if tokens[index - 1]['type'] == 'NUMBER' and tokens[index + 1]['type'] == 'NUMBER':
                 tokens[index - 1]['number'] = tokens[index - 1]['number'] * tokens[index + 1]['number']
-                del tokens[index  : index + 2]
+                del tokens[index : index + 2]
                 index -= 2
             else:
                 print 'Invalid syntax2'
-                #exit(1)
+                exit(1)
         elif tokens[index]['type'] == 'DIVIDE':
             if tokens[index - 1]['type'] == 'NUMBER' and tokens[index + 1]['type'] == 'NUMBER':
                 tokens[index - 1]['number'] = tokens[index - 1]['number'] * 1.0 / tokens[index + 1]['number']
-                del tokens[index  : index + 2]
+                del tokens[index : index + 2]
                 index -= 2
             else:
                 print 'Invalid syntax3'
@@ -126,6 +126,7 @@ def make_parindexlist(tokens):
 def evaluate_parenthesis(tokens):
     parindex = make_parindexlist(tokens)
     while len(parindex) > 0:
+        parindex = make_parindexlist(tokens)
         index = parindex[-1]['pos'] + 1
         while index < len(tokens):
             if tokens[index]['type'] == 'PARCLOSE':
