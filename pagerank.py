@@ -53,7 +53,7 @@ def pagerank(nodes):
     flag_sum = 0
     give_point(nodes)
     while index < len(nodes):
-        if abs(nodes[index]['point'] - nodes[index]['temp']) < 0.001:
+        if abs(nodes[index]['point'] - nodes[index]['temp']) < 0.01:
             flag.append(0)
         else:
             flag.append(1)
@@ -74,7 +74,7 @@ def main():
     i = 0
     index = 0
     sum = 0
-    f = open('./homework4/large_data.txt')
+    f = open('./homework4/small_data.txt')
     lines = f.readlines()
     (nodes, node_number) = make_nodelist(lines)
     make_edgelist(lines, nodes, node_number)
